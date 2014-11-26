@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+
+  "name": "Notes",
+  "description": "An easy to notes and todo list creator .",
+  "version": "1.0",
+
+  "permissions": [
+    "storage"
+  ],
+  "browser_action": {
+    "default_icon": "images/calculator-16.png",
+    "default_popup": "notes.html"
+  }
+}
