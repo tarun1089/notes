@@ -11,5 +11,8 @@
   "browser_action": {
     "default_icon": "images/calculator-16.png",
     "default_popup": "notes.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
   }
 }
