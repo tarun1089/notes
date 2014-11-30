@@ -22,8 +22,27 @@ requirejs.config({
     }
 });
 
+var log = console.log.bind(console);
+
 requirejs(['notes'], function(){
-    console.log("notes loaded");
+
+    var backgroundPage;
+    chrome.runtime.getBackgroundPage(function(page){
+        
+        backgroundPage = page;
+
+    });
+
+    function bindEvents(){
+        
+    }
+
+    function bindEventsOnBackgroundPage(){
+
+        addEventListener("unload", function (event) {
+
+        }, true);
+    }
+
 });
 
-var log = console.log.bind(console);
