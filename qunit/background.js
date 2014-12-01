@@ -12,6 +12,24 @@ var Storage = (function(){
 				return true;
 			}
 			return false;
+		},
+
+		removeValueFromArray: function(arr, val){
+			var index = arr.indexOf(val);
+			var reduced_arr = [];
+			var i,length;
+			if (index !== -1){
+				for (i = 0, length = arr.length ; i < length; ++i){
+					if (i !== index){
+						reduced_arr.push(arr[i]);
+					}
+				}
+			}
+			if ( i === length){
+				return reduced_arr
+			} else {
+				return arr;
+			}
 		}
 	};
 
@@ -25,6 +43,7 @@ var Storage = (function(){
 			_QUOTA_ITEM: 8192,
 			_quota: 0,
 			_FRAGMENT_SIZE: 8000,
+			_fragment_key: "_fragmentedKeys",
 
 			setQuota: function(val){
 				if (val < this._QUOTA_BYTES && val > 0) {
@@ -39,26 +58,79 @@ var Storage = (function(){
 			},
 
 			getValues: function(keys, callback){
-				sync.get(keys, callback);
+				var self = this;
+				sync.get(this._fragment_key, function(objVal){
+					var val = objVal[self._fragment_key];
+					var parts = 0;
+					var i, length;
+					var keys_arr = Array.prototype.slice.call(keys,0);
+					var small_subset_of_keys = Array.prototype.slice.call(keys,0);
+					var results = {};
+					var func_arr = [];
+					if (Array.isArray(val) && val.length > 0 ){
+						for(i = 0 , length = val.length; i < length; ++i){
+							if (keys_arr.indexOf(val[i].key ) != -1){
+								(function(key){
+									func_arr.push(function(async_callback){
+										self.getValue(key, function(objVal){
+											var newobj = {};
+											newobj["key"] = key;
+											newobj["value"] = objVal[key]
+											async_callback(null, newobj);
+										});
+									});
+								})(val[i].key);
+								small_subset_of_keys = Util.removeValueFromArray(small_subset_of_keys,val[i].key );
+							}
+						}
+						if (func_arr.length > 0){
+							async.series(func_arr, function(err, async_results){
+								debugger;
+								sync.get(small_subset_of_keys, function(objVal){
+									var i,j,length;
+									var objVal_keys = Object.keys(objVal);
+									for (i = 0, length = objVal_keys.length; i < length ;++i){
+										results[keys[i]] = objVal[keys[i]];
+									}
+									for (j = 0, length = async_results.length; j < length ;++j){
+										results[async_results[j]["key"]] = async_results[j]["value"];
+									}
+									callback(results);
+									return;
+								});
+							});
+						} else {
+							sync.get(keys, callback);
+						}
+					} else {
+						sync.get(keys, callback);
+					}
+				});
 			},
 
-			getValue: function(keys, callback){
-				sync.get("_fragmentedKeys", function(objVal){
-					var val = objVal._fragmentedKeys;
+			getValue: function(key, callback){
+
+				if (!Util.isString(key)){
+					callback(new Error ("key should be string"));
+					return;
+				}
+				var self = this;
+				sync.get(this._fragment_key, function(objVal){
+					var val = objVal[self._fragment_key];
 					var parts = 0;
 					var i, length;
 					var parts_keys_array = [];
 					if (Array.isArray(val) && val.length > 0 ){
-						if (Util.isString(keys)) {
+						if (Util.isString(key)) {
 							for(i = 0 , length = val.length; i < length; ++i){
-								if (val[i].key === keys){
+								if (val[i].key === key){
 									parts = val[i].parts;
 									break;
 								}
 							}
 							if (parts != 0){
 								for ( i = 0; i < parts; ++i){
-									var key_string = keys + '_' + i;
+									var key_string = key + '_' + i;
 									parts_keys_array.push(key_string);
 								}
 
@@ -67,7 +139,7 @@ var Storage = (function(){
 							
 						}
 					} else {
-						sync.get(keys, callback);
+						sync.get(key, callback);
 					}
 				});
 
@@ -78,7 +150,7 @@ var Storage = (function(){
 					for( var i = 0, length = valKeys.length; i < length;++i ){
 						str += val[valKeys[i]];
 					}
-					object[keys] = str;
+					object[key] = str;
 					callback(object);
 				}
 			},
@@ -106,6 +178,10 @@ var Storage = (function(){
 			},
 
 			setKey: function(key, value, callback){
+				if (!Util.isString(key)){
+					callback (new Error ("key should be string"));
+					return;
+				}
 				var self = this;
 				var sizeOfKeyValue = this.getSizeOfKeyValue(key, value);
 				this.getSpaceLeft(function(spaceLeft){
@@ -172,10 +248,6 @@ var Storage = (function(){
 
 			},
 
-			getFragmentValue: function(){
-
-			},
-
 			setFragmentValue: function(key, value, callback){
 
 				var fragments = this.getFragments(key, value);
@@ -187,10 +259,10 @@ var Storage = (function(){
 			},
 
 			setFragmentKey: function(key, parts, callback){
-				sync.get("_fragmentedKeys",onGetFragmentedValues.bind(this));
+				sync.get(this._fragment_key,onGetFragmentedValues.bind(this));
 				function onGetFragmentedValues(objVal){
 					var object, key_object;
-					var value = objVal._fragmentedKeys;
+					var value = objVal[this._fragment_key];
 					if (Array.isArray(value) && value.length > 0) {
 						var _fragmentedKeys = value;
 						var index = _fragmentedKeys.indexOf(key);
@@ -202,7 +274,7 @@ var Storage = (function(){
 								"parts": parts
 							};
 							_fragmentedKeys.push(key_object);
-							object["_fragmentedKeys"] = _fragmentedKeys;
+							object[this._fragment_key] = _fragmentedKeys;
 							this.setKeys(object, callback);
 						} else {
 							var fragment = _fragmentedKeys[index];
@@ -215,7 +287,7 @@ var Storage = (function(){
 							"key" : key,
 							"parts": parts
 						};
-						object["_fragmentedKeys"] = [key_object];
+						object[this._fragment_key] = [key_object];
 						this.setKeys(object, callback);
 					}
 					

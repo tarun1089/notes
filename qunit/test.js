@@ -87,8 +87,7 @@
 
   QUnit.asyncTest( "Sync Storage: setKeys: More than Quota: 0", function( assert ) {
   	var str = '';
- 	for (var i = 0 ; i < 50000; ++i ){str += '0';}
- 	Storage.Sync.setKey("str",str);
+ 	for (var i = 0 ; i < 10000; ++i ){str += '0';}
 
  	Storage.Sync.setKey("str",str,function(){
  		Storage.Sync.getValue("str", function(val){
@@ -101,7 +100,6 @@
   QUnit.asyncTest( "Sync Storage: setKeys: More than Quota: a", function( assert ) {
   	var str2 = '';
  	for (var i = 0 ; i < 10000; ++i ){str2 += 'a';}
- 	Storage.Sync.setKey("str2",str2);
 
  	Storage.Sync.setKey("str2",str2,function(){
  		Storage.Sync.getValue("str2", function(val){
@@ -110,6 +108,35 @@
  		});
 	});
  });
+
+  QUnit.asyncTest( "Sync Storage: getValues:[m,str3]", function( assert ) {
+  	var str3 = '';
+ 	for (var i = 0 ; i < 10000; ++i ){str3 += 'M';}
+ 	Storage.Sync.setKey("m",100);
+ 	Storage.Sync.setKey("str3",str3,function(){
+ 		Storage.Sync.getValues(["m","str3"], function(val){
+ 			assert.deepEqual(val,{m: 100,str3:str3});
+ 			QUnit.start();
+ 		});
+	});
+ });
+
+  QUnit.asyncTest( "Sync Storage: getValues:[m,str3,str4]", function( assert ) {
+  	var str5 = '';
+  	var str4 = '';
+ 	for (var i = 0 ; i < 10000; ++i ){str5 += 'P';str4 += 'K';}
+ 	Storage.Sync.setKey("m",100);
+ 	Storage.Sync.setKey("str4",str4,function(){
+ 		Storage.Sync.setKey("str5",str5,function(){
+	 		Storage.Sync.getValues(["m","str5","str4"], function(val){
+	 			assert.deepEqual(val,{m: 100,str5:str5,str4:str4});
+	 			QUnit.start();
+	 		});
+		});
+	});
+ 	
+ });
+
 
  	// Storage.Sync.removeAllKeys();
  	// Storage.Sync.setKey("a", 100);
