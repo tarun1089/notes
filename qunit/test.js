@@ -207,7 +207,11 @@
  	for (var i = 0 ; i < 20000; ++i ){key3 += 'P';key4 += 'K';}
  	var object = {
  		key3: key3,
- 		a: 100
+ 		a: {
+ 			c: 100,
+ 			str: "str",
+ 			key4: key4
+ 		}
  	};
   	Storage.removeAllKeys(function(){
   		Storage.setKeys(object,function(){

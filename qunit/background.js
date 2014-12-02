@@ -69,6 +69,34 @@ var Storage = (function(){
 			}
 			return size;
 		},
+
+		stringifyKeys: function(obj){
+			var keys =  Object.keys(obj);
+			var newobj = {};
+			var i,length;
+			if (keys.length > 0 ){
+				for (i = 0, length = keys.length ; i < length; ++i){
+					var key = keys[i];
+					var value = JSON.stringify(obj[keys[i]]);
+					newobj[key] = value;
+				}
+			}
+			return newobj;
+		},
+
+		unstringifyKeys: function(obj){
+			var keys =  Object.keys(obj);
+			var newobj = {};
+			var i,length;
+			if (keys.length > 0 ){
+				for (i = 0, length = keys.length ; i < length; ++i){
+					var key = keys[i];
+					var value = JSON.parse(obj[keys[i]]);
+					newobj[key] = value;
+				}
+			}
+			return newobj;
+		}
 	};
 
 	/**
@@ -475,9 +503,11 @@ var Storage = (function(){
 				self.Local.getAllValues(function(objVal){
 					var objValSize = Util.getSizeOfObject(objVal);
 					if (objValSize < self._QUOTA_BYTES){
-						self.Sync.setValues(objVal, function(){
-							self.SYNC = true;
-							callback({'saved': 'Ok'});
+						self.Sync.removeAllKeys(function(){
+							self.Sync.setValues(objVal, function(){
+								self.SYNC = true;
+								callback({'saved': 'Ok'});
+							});
 						});
 					} else {
 						callback({'saved': 'Error'});
@@ -499,48 +529,13 @@ var Storage = (function(){
 		},
 
 		setKey: function(key, value, callback){
-			var sizeOfKeyValue = Util.getSizeOfKeyValue(key, value);
-			var self = this;
-			var return_object = {};
-			/* Get local storage space left . If not available raise an alert. BAD UI :( */
-			this.Local.getSpaceLeft(function(spaceLeft){
-				if (spaceLeft >  sizeOfKeyValue){
-					self.Local.setKey(key, value, function(){
-						/* Local saved. Now save in Sync */
-						if (self.isSyncOn()){
-							self.Sync.getSpaceLeft(function(syncSpaceLeft){
-								if (syncSpaceLeft >  sizeOfKeyValue){
-									self.Sync.setKey(key, value, function(){
-										/* return space left in Sync storage */
-										return_object["saved"] = 'Ok';
-										return_object["spaceLeft"] = spaceLeft;
-										callback(return_object);
-									});
-								} else {
-									return_object["saved"] = 'Error';
-									return_object["spaceLeft"] = spaceLeft;
-									callback(return_object);
-								}
-							});
-						} else {
-							return_object["saved"] = 'Ok';
-							return_object["spaceLeft"] = spaceLeft;
-							callback(return_object);
-						}
-					});
-				} else {
-					alert("You have too much data on sticky notes. Extension Can't save more data.")
-				}
-			});
-		},
-
-		setKey2: function(key, value, callback){
 			var object = {};
 			object[key] = value;
 			this.setKeys(object,callback);
 		},
 
-		setKeys: function(object, callback){
+		setKeys: function(obj, callback){
+			var object = Util.stringifyKeys(obj);
 			var sizeOfObject = Util.getSizeOfObject(object);
 			var self = this;
 			var return_object = {};
@@ -580,25 +575,44 @@ var Storage = (function(){
 
 		getValue: function(key, callback){
 			if (this.isSyncOn()){
-				this.Sync.getValue(key, callback);
+				this.Sync.getValue(key, onReturnValues);
 			} else {
-				this.Local.getValue(key, callback);
+				this.Local.getValue(key, onReturnValues);
 			}
+
+			function onReturnValues(obj){
+				var newobj = Util.unstringifyKeys(obj);
+				callback(newobj);
+
+			}
+
 		},
 
 		getValues: function(keys, callback){
 			if (this.isSyncOn()){
-				this.Sync.getValues(keys, callback);
+				this.Sync.getValues(keys, onReturnValues);
 			} else {
-				this.Local.getValues(keys, callback);
+				this.Local.getValues(keys, onReturnValues);
+			}
+
+			function onReturnValues(obj){
+				var newobj = Util.unstringifyKeys(obj);
+				callback(newobj);
+
 			}
 		},
 
 		getAllValues: function(callback){
 			if (this.isSyncOn()){
-				this.Sync.getAllValues(callback);
+				this.Sync.getAllValues(onReturnValues);
 			} else {
-				this.Local.getAllValues(callback);
+				this.Local.getAllValues(onReturnValues);
+			}
+
+			function onReturnValues(obj){
+				var newobj = Util.unstringifyKeys(obj);
+				callback(newobj);
+
 			}
 		},
 
