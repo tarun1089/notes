@@ -99,7 +99,7 @@
 
   QUnit.asyncTest( "Sync Storage: setKeys: More than Quota: a", function( assert ) {
   	var str2 = '';
- 	for (var i = 0 ; i < 10000; ++i ){str2 += 'a';}
+ 	for (var i = 0 ; i < 20000; ++i ){str2 += 'a';}
 
  	Storage.Sync.setKey("str2",str2,function(){
  		Storage.Sync.getValue("str2", function(val){
@@ -125,7 +125,6 @@
   	var str5 = '';
   	var str4 = '';
  	for (var i = 0 ; i < 10000; ++i ){str5 += 'P';str4 += 'K';}
- 	Storage.Sync.setKey("m",100);
  	Storage.Sync.setKey("str4",str4,function(){
  		Storage.Sync.setKey("str5",str5,function(){
 	 		Storage.Sync.getValues(["m","str5","str4"], function(val){
@@ -136,6 +135,111 @@
 	});
  	
  });
+
+  QUnit.asyncTest( "Sync Storage: getValues:{'str6'}", function( assert ) {
+  	var str6 = '';
+  	var str7 = '';
+ 	for (var i = 0 ; i < 10000; ++i ){str6 += 'G';str7 += 'F';}
+ 	Storage.Sync.setKeys({'str6': str6, 'str7': str7},function(){
+ 		Storage.Sync.getValues(['str6', 'str7'], function(val){
+ 			assert.deepEqual(val,{str6: str6, str7:str7});
+ 			QUnit.start();
+ 		});
+	});
+ 	
+ });
+
+  QUnit.asyncTest( "Sync Storage: getValues:{'key1': {'key2': 'value'}}", function( assert ) {
+  	
+ 	Storage.Sync.setKeys({'key1': {'key2': 'value'}},function(){
+ 		Storage.Sync.getValues("key1", function(val){
+ 			assert.deepEqual(val,{'key1': {'key2': 'value'}});
+ 			QUnit.start();
+ 		});
+	});
+ 	
+ });
+
+  QUnit.asyncTest( "Sync Storage: getValues:{'key3': {'key4': 'value'}}", function( assert ) {
+  	
+ 	Storage.Sync.setKeys({'key3': {'key4': 'value'}},function(){
+ 		Storage.Sync.getValues(["key3"], function(val){
+ 			assert.deepEqual(val,{'key3': {'key4': 'value'}});
+ 			QUnit.start();
+ 		});
+	});
+ 	
+ });
+
+ QUnit.asyncTest( "Global: setKeys in limit", function( assert ) {
+ 	var key3 = '';
+  	var key4= '';
+ 	for (var i = 0 ; i < 10000; ++i ){key3 += 'P';key4 += 'K';}
+  	Storage.removeAllKeys(function(){
+  		Storage.setKeys({'key3': key3, 'key4': key4},function(){
+	 		Storage.getValues(["key3", "key4"], function(val){
+	 			assert.deepEqual(val,{'key3': key3, 'key4': key4});
+	 			QUnit.start();
+	 		});
+		});
+  	});
+ });
+
+ QUnit.asyncTest( "Global: setKeys out of limit1", function( assert ) {
+ 	var key3 = '';
+  	var key4= '';
+ 	for (var i = 0 ; i < 60000; ++i ){key3 += 'P';key4 += 'K';}
+  	Storage.removeAllKeys(function(){
+  		Storage.syncOn(function(status){
+			if (status.saved === 'Ok'){
+				Storage.setKeys({'key3': key3, 'key4': key4},function(val){
+		 			assert.deepEqual(val.saved,'Error');
+		 			QUnit.start();
+				});
+			}
+  		});
+  	});
+ });
+
+ QUnit.asyncTest( "Global: complex structure", function( assert ) {
+ 	var key3 = '';
+  	var key4= '';
+ 	for (var i = 0 ; i < 20000; ++i ){key3 += 'P';key4 += 'K';}
+ 	var object = {
+ 		key3: key3,
+ 		a: 100
+ 	};
+  	Storage.removeAllKeys(function(){
+  		Storage.setKeys(object,function(){
+  			Storage.syncOn(function(status){
+					if (status.saved === 'Ok'){
+						Storage.getValues(["key3", "a"], function(val){
+				 			assert.deepEqual(val,object);
+				 			QUnit.start();
+			 		});
+				}
+			});
+		});
+  	});
+ });
+
+  QUnit.asyncTest( "Global: setKeys out of limit2", function( assert ) {
+ 	var key3 = '';
+  	var key4= '';
+ 	for (var i = 0 ; i < 60000; ++i ){key3 += 'P';key4 += 'K';}
+  	Storage.removeAllKeys(function(){
+ 		Storage.syncOff();
+  		Storage.setKeys({'key3': key3, 'key4': key4},function(){
+	 		Storage.getValues(["key3", "key4"], function(val){
+	 			assert.deepEqual(val,{'key3': key3, 'key4': key4});
+	 			QUnit.start();
+	 		});
+		});
+  	});
+ });
+
+  
+
 
 
  	// Storage.Sync.removeAllKeys();
