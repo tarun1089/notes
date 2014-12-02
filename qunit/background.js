@@ -566,7 +566,6 @@ var Storage = (function(){
 						}
 					});
 				} else {
-					debugger;
 					alert("You have too much data on sticky notes. Extension Can't save more data.")
 
 				}
