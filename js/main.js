@@ -2,10 +2,12 @@ requirejs.config({
     baseUrl: 'js/',
     paths: {
         notes: 'notes',
-        app: 'views/app',
         jquery: 'lib/jquery-2.1.1',
         underscore: 'lib/underscore',
-        backbone: 'lib/backbone'
+        backbone: 'lib/backbone',
+        medium: 'lib/medium-editor',
+        storage: 'lib/storage',
+        async: 'lib/async'
     },
     shim: {
         backbone: {
@@ -15,34 +17,16 @@ requirejs.config({
         underscore: {
             exports: '_'
         },
-        app: {
-            deps: ['backbone'],
-            // exports: 'App'
+        storage : {
+            deps: ['async'],
+            exports: 'storage'
         }
     }
 });
 
 var log = console.log.bind(console);
-
-requirejs(['notes'], function(){
-
-    var backgroundPage;
-    chrome.runtime.getBackgroundPage(function(page){
-        
-        backgroundPage = page;
-
-    });
-
-    function bindEvents(){
-        
-    }
-
-    function bindEventsOnBackgroundPage(){
-
-        addEventListener("unload", function (event) {
-
-        }, true);
-    }
-
+var notes;
+requirejs(['notes','medium'], function(Notes){
+    notes = Notes;
 });
 

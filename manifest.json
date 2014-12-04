@@ -13,6 +13,6 @@
     "default_popup": "notes.html"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["async.js","background.js"]
   }
 }
