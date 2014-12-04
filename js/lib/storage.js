@@ -546,23 +546,24 @@ define(['async'],function(async){
 					self.Local.setKeys(object, function(){
 						/* Local saved. Now save in Sync */
 						if (self.isSyncOn()){
-							self.Sync.getSpaceLeft(function(syncSpaceLeft){
-								if (syncSpaceLeft >  sizeOfObject){
+							if (sizeOfObject < self.Sync._QUOTA_BYTES){
+								self.Sync.removeAllKeys(function(){
 									self.Sync.setKeys(object, function(){
 										/* return space left in Sync storage */
 										return_object["saved"] = 'Ok';
-										return_object["spaceLeft"] = spaceLeft;
+										return_object["spaceSaved"] = sizeOfObject;
 										callback(return_object);
 									});
-								} else {
-									return_object["saved"] = 'Error';
-									return_object["spaceLeft"] = spaceLeft;
-									callback(return_object);
-								}
-							});
+								});
+							} else {
+								return_object["saved"] = 'Error';
+								return_object["spaceSaved"] = sizeOfObject;
+								callback(return_object);
+							}
+
 						} else {
 							return_object["saved"] = 'Ok';
-							return_object["spaceLeft"] = spaceLeft;
+							return_object["spaceSaved"] = sizeOfObject;
 							callback(return_object);
 						}
 					});
