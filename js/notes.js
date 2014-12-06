@@ -1,4 +1,4 @@
-define(['views/app', 'collections/notes', 'storage'],function(AppView, NotesCollection, AllStorage){
+define(['views/app', 'collections/notes', 'models/settings','storage'],function(AppView, NotesCollection, SettingsModel, AllStorage){
 
 
 	// var backgroundPage;
@@ -17,9 +17,10 @@ define(['views/app', 'collections/notes', 'storage'],function(AppView, NotesColl
         bindEventsOnBackgroundPage : function(backgroundPage){
             var self = this;
             addEventListener("unload", function (event) {
-                var data = self.getDataFromNotes();
+                var obj = self.getDataFromNotes();
                 var object = {
-                    notesData : data
+                    notesData : obj.dataArr,
+                    settings: obj.settings
                 };
                 backgroundPage.Storage.setKeys(object, function(val){
                     console.log(val.status);
@@ -29,29 +30,45 @@ define(['views/app', 'collections/notes', 'storage'],function(AppView, NotesColl
 
         getDataFromNotes : function(){
             var dataArr = [];
+            var settings = {};
+            var obj = {};
             if (this.appView && this.appView.childViews){
-                _.each(this.appView.childViews, function(view, index){
+                _.each(this.appView.childViews, function(view_obj, index){
+                    var view = view_obj.noteView;
                     var innerHTML = view.el.html();
                     var obj = {
                         text: innerHTML
                     }
                     dataArr.push(obj);
                 });
+
             }
+
+            if (this.settingsModel){
+                settings = this.settingsModel.toJSON();
+            }
+
+            obj["dataArr"] = dataArr;
+            obj["settings"] = settings;
             
-            return dataArr;
+            return obj;
         },
 
         onGetDataFromStorage : function(data){
-            debugger;
             var notesData;
-            if (data && data.notesData) {
+            var settings = {};
+            if (data && data.notesData && data.notesData.length > 0) {
                 notesData  = data.notesData;
             } else {
-                notesData  = [{title:'title', text: 'This is the text'}];
+                notesData  = [{title:'title', text: 'This is the text'},{title:'title2', text: 'This is the text2'}];
+            }
+
+            if (data && data.settings && Object.keys(data.settings).length > 0){
+                settings = data.settings;
             }
             this.notesCollection = new NotesCollection(notesData);
-            this.appView = new AppView({collection: this.notesCollection});
+            this.settingsModel = new SettingsModel();
+            this.appView = new AppView({notesCollection: this.notesCollection, settingsModel: this.settingsModel});
             console.log(this.getDataFromNotes());
         }
     };
@@ -63,7 +80,7 @@ define(['views/app', 'collections/notes', 'storage'],function(AppView, NotesColl
     });
 
     
-    AllStorage.getValues(['notesData'],Notes.onGetDataFromStorage.bind(Notes));
+    AllStorage.getValues(['notesData','settings'],Notes.onGetDataFromStorage.bind(Notes));
 
     return Notes;
 

@@ -3,5 +3,7 @@ define(['models/note'],function(NoteModel){
 		model: NoteModel,
 	});
 
+	
+
 	return NotesCollection;
 });
