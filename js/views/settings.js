@@ -5,7 +5,7 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 		events: {
 			'click .js-add-note' 		  : 'addNote',
 			'click .js-change-text-size' : 'changeFontSize',
-			'click .js-change-text-style' : 'changeFontStyle',
+			'click .js-change-text-style' : 'changeFontFamily',
 			'click .js-add-list': 'addList'
 
 		},
@@ -67,21 +67,21 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 					break;
 
 
-				case 'fontStyle': 
+				case 'fontFamily': 
 					displayOptions = [
 							{
-								textToDisplay:"Helvetica",
-								id: "small",
-								value: 'Helvetica'
+								textToDisplay:"Monospace",
+								id: "monospace",
+								value: 'monospace'
 							},
 							{
-								textToDisplay:"Times Roman",
-								id: "normal",
-								value: 'Times New Roman'
+								textToDisplay:"Lucida Grande",
+								id: "lucida",
+								value: 'Lucida Grande'
 							},
 							{
 								textToDisplay:"Open Sans",
-								id: "large",
+								id: "comic",
 								value: 'Comic Sans'
 							}
 						];
@@ -106,8 +106,8 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 			this.initializeOptionsView('fontSize');
 		},
 
-		changeFontStyle: function(e){
-			this.initializeOptionsView('fontStyle');
+		changeFontFamily: function(e){
+			this.initializeOptionsView('fontFamily');
 		},
 
 		toggleMenu: function(){

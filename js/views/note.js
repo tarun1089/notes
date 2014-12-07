@@ -8,7 +8,8 @@ define(['backbone'],function( Backbone){
 			var selector = '.' + this.NOTE_CLASS_NAME + '-' + model.cid;
 			this.el = $(selector);
 			this.editor = new MediumEditor(selector, {
-	            disableToolbar: true
+	            disableToolbar: true,
+	            cleanPastedHTML: true
 	        });
 		},
 		getNoteTemplate: function(model, number){

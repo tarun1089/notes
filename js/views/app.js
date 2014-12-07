@@ -42,7 +42,7 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 			var settingModel = this.settingsModel;
 			var settings =  {};
 			settings['font-size'] =  settingModel.get('fontSize');
-			settings['font-style'] = settingModel.get('fontStyle');
+			settings['font-family'] = settingModel.get('fontFamily');
 			settings['width'] = settingModel.get('width');
 			settings['height'] = settingModel.get('height');
 			this.$el.find('.note').css(settings);

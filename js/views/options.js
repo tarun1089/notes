@@ -47,8 +47,8 @@ define(['backbone'],function( Backbone){
 					this.AppView.settingsModel.set({'fontSize': size});
 					break;
 
-				case "fontStyle":
-					this.AppView.settingsModel.set({'fontStyle': value});
+				case "fontFamily":
+					this.AppView.settingsModel.set({'fontFamily': value});
 					break;
 			}
 		},

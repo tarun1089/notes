@@ -2,7 +2,7 @@ define(['backbone'],function(Backbone){
 	var SettingsModel = Backbone.Model.extend({
 		defaults : {
 			fontSize: 14,
-			fontStyle: 'Helvetica',
+			fontFamily: 'Lucida Grande',
 			width: 200,
 			height: 450
 		},
