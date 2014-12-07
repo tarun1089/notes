@@ -25,7 +25,7 @@ define(['backbone'],function( Backbone){
 
 			str += '</div>';
 			return str;
-		},
+		}
 	});
 	return NoteView;
 });

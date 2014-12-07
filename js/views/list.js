@@ -1,4 +1,4 @@
-define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, SettingsView){
+define(['backbone', 'views/list_item','views/settings'],function(Backbone, ListItemView){
 	var AppView = Backbone.View.extend({
 		el: '#notes',
 		events: {
@@ -12,7 +12,7 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 			this.childViews = [];
 			this.render(notesCollection);
 			this.applySettings();
-			this.bindEvents();
+			this.bindEvents(notesCollection);
 
 			this.initializeSettingsView(notesCollection, this.settingsModel);
 		},
@@ -22,7 +22,7 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 				notesCollection: notesCollection,
 				settingsModel: settingsModel
 			};
-			this.settingsView = new SettingsView(options, this);
+			this.settingsView = new SettingsView(options);
 		},
 
 		render: function(collection){
@@ -61,6 +61,7 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 		onAddNoteToCollection: function(model) {
 			var index = this.notesCollection.length - 1;
 			this.addNote(model, index, this.$el);
+
 		},
 
 		removeNote: function(e){
@@ -68,7 +69,6 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 			var cid = targetNote.attr('data-cid');
 			var model = this.notesCollection.get(cid);
 			this.notesCollection.remove(model);
-			targetNote.remove();
 		},
 
 		onRemoveNoteFromCollection: function(model) {
@@ -81,20 +81,14 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 				return false;
 			});
 			viewObjToRemove.noteView.remove();
-			// this.render(this.notesCollection);
-			// this.applySettings();
-
-		},
-
-		onSettingsChange: function(model){
+			this.render(this.notesCollection);
 			this.applySettings();
+
 		},
 
-		bindEvents: function(){
-			this.notesCollection.on('add',this.onAddNoteToCollection.bind(this));
-			this.notesCollection.on('remove',this.onRemoveNoteFromCollection.bind(this));
-			this.settingsModel.on('change', this.onSettingsChange.bind(this));
-
+		bindEvents: function(collection){
+			collection.on('add',this.onAddNoteToCollection.bind(this));
+			collection.on('remove',this.onRemoveNoteFromCollection.bind(this));
 		}
 	});
 

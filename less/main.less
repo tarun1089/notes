@@ -35,7 +35,7 @@ body {
 
 
 
-.settings {
+.hide-show {
 	width: 40px;
 	height: 40px;
 	border-radius: 20px;
@@ -47,21 +47,37 @@ body {
 	cursor: pointer;
 }
 
-.setting {
+.settings {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
 	display: none;
 }
 
-.settings:hover {
+/*.setting {
+	display: none;
+}*/
+
+.settings.selected {
+	display: block;
 	width: 200px;
 	height: auto;
 	background-color: wheat;
 }
 
-.settings:hover .setting {
+.settings.selected .setting {
 
 	display: inline-block;
 	border: 1px solid rgba(0,0,0,.1);
 	padding: 10px;
 	cursor: pointer;
 
+}
+
+
+
+
+.options li {
+	padding: 10px;
+	cursor: pointer;
 }
