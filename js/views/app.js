@@ -9,20 +9,21 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 			var notesCollection = options.notesCollection;
 			this.settingsModel = options.settingsModel;
 			this.notesCollection = options.notesCollection;
+			this.Storage = options.Storage;
 			this.childViews = [];
 			this.render(notesCollection);
 			this.applySettings();
 			this.bindEvents();
 
-			this.initializeSettingsView(notesCollection, this.settingsModel);
+			this.initializeSettingsView(notesCollection, this.settingsModel, this.Storage);
 		},
 
-		initializeSettingsView: function(notesCollection, settingsModel){
+		initializeSettingsView: function(notesCollection, settingsModel, Storage){
 			var options = {
 				notesCollection: notesCollection,
 				settingsModel: settingsModel
 			};
-			this.settingsView = new SettingsView(options, this);
+			this.settingsView = new SettingsView(options, this, Storage);
 		},
 
 		render: function(collection){
@@ -46,6 +47,10 @@ define(['backbone', 'views/note','views/settings'],function(Backbone, NoteView, 
 			settings['width'] = settingModel.get('width');
 			settings['height'] = settingModel.get('height');
 			this.$el.find('.note').css(settings);
+
+			if (!settingModel.get('sync')){
+				this.Storage.syncOff();
+			}
 		},
 
 		addNote: function(model,index , parentEl){

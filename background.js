@@ -1662,9 +1662,9 @@ var Storage = (function(){
             } else {
                 self.Local.getAllValues(function(objVal){
                     var objValSize = Util.getSizeOfObject(objVal);
-                    if (objValSize < self._QUOTA_BYTES){
+                    if (objValSize < self.Local._QUOTA_BYTES){
                         self.Sync.removeAllKeys(function(){
-                            self.Sync.setValues(objVal, function(){
+                            self.Sync.setKeys(objVal, function(){
                                 self.SYNC = true;
                                 callback({'saved': 'Ok'});
                             });

@@ -6,16 +6,19 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 			'click .js-add-note' 		  : 'addNote',
 			'click .js-change-text-size' : 'changeFontSize',
 			'click .js-change-text-style' : 'changeFontFamily',
+			'click .js-change-sync-option' : 'toggleSync',
 			'click .js-add-list': 'addList'
 
 		},
 
-		initialize: function(options, AppView){
+		initialize: function(options, AppView, Storage){
 			this.options = options;
 			this.notesCollection = this.options.notesCollection;
 			this.settingsModel = this.options.settingsModel;
 			this.bindEvents();
 			this.AppView = AppView;
+			this.Storage = Storage;
+
 		},
 
 		initializeOptionsView: function(type){
@@ -109,6 +112,22 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 		changeFontFamily: function(e){
 			this.initializeOptionsView('fontFamily');
 		},
+
+		toggleSync: function(){
+			if (this.Storage.isSyncOn()){
+				this.Storage.syncOff();
+				this.settingsModel.set({'sync':0});
+				console.log("syncing off");
+			} else {
+				this.Storage.syncOn(function(val){
+					console.log(val);
+					if(val.saved == 'Ok'){
+						this.settingsModel.set({'sync':1});
+					}
+				});
+			}
+		},
+
 
 		toggleMenu: function(){
 			if (this.$el.hasClass('selected')){

@@ -4,7 +4,8 @@ define(['backbone'],function(Backbone){
 			fontSize: 14,
 			fontFamily: 'Lucida Grande',
 			width: 200,
-			height: 450
+			height: 450,
+			sync: 1,
 		},
 
 	});

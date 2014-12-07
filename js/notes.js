@@ -1,4 +1,4 @@
-define(['views/app', 'collections/notes', 'models/settings','storage'],function(AppView, NotesCollection, SettingsModel, AllStorage){
+define(['views/app', 'collections/notes', 'models/settings','storage'],function(AppView, NotesCollection, SettingsModel, Storage){
 
 
 	// var backgroundPage;
@@ -67,8 +67,8 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
                 settings = data.settings;
             }
             this.notesCollection = new NotesCollection(notesData);
-            this.settingsModel = new SettingsModel();
-            this.appView = new AppView({notesCollection: this.notesCollection, settingsModel: this.settingsModel});
+            this.settingsModel = new SettingsModel(settings);
+            this.appView = new AppView({notesCollection: this.notesCollection, settingsModel: this.settingsModel, Storage: Storage});
             console.log(this.getDataFromNotes());
         }
     };
@@ -80,7 +80,7 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
     });
 
     
-    AllStorage.getValues(['notesData','settings'],Notes.onGetDataFromStorage.bind(Notes));
+    Storage.getValues(['notesData','settings'],Notes.onGetDataFromStorage.bind(Notes));
 
     return Notes;
 
