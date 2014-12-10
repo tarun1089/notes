@@ -20,7 +20,7 @@ define(['backbone'],function( Backbone){
 			var str = '';
 			str += '<ul id="' + idName+ '" class="' + className + '">';
 			for( var i = 0, length = displayOptions.length; i < length; ++i) {
-				str += '<li data-id="' +displayOptions[i].id + '" data-size="' + displayOptions[i].value+ '">';
+				str += '<li data-id="' +displayOptions[i].id + '" data-value="' + displayOptions[i].value+ '">';
 						str += displayOptions[i].textToDisplay;
 
 				str += '</li>';
@@ -33,7 +33,7 @@ define(['backbone'],function( Backbone){
 
 		handleClickForOption: function(e){
 			var id = $(e.currentTarget).attr('id');
-			var value = $(e.target).attr('data-size');
+			var value = $(e.target).attr('data-value');
 			this.applySettingsBasedOnId(id,value);
 			this.supressEvent(e);
 
@@ -49,6 +49,16 @@ define(['backbone'],function( Backbone){
 
 				case "fontFamily":
 					this.AppView.settingsModel.set({'fontFamily': value});
+					break;
+
+				case "size":
+					var dimensions = value.split("-");
+					var width = parseInt(dimensions[0],10);
+					var height = parseInt(dimensions[1],10);
+					this.AppView.settingsModel.set({
+						width: width,
+						height: height
+					});
 					break;
 			}
 		},

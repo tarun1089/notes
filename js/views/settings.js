@@ -3,22 +3,23 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 		el: "#settings",
 
 		events: {
-			'click .js-add-note' 		  : 'addNote',
-			'click .js-change-text-size' : 'changeFontSize',
-			'click .js-change-text-style' : 'changeFontFamily',
-			'click .js-change-sync-option' : 'toggleSync',
-			'click .js-add-list': 'addList'
+			'click .js-add-note' 		  	: 'addNote',
+			'click .js-change-text-size' 	: 'changeFontSize',
+			'click .js-change-text-style' 	: 'changeFontFamily',
+			'click .js-change-size' 		: 'changeSize',
+			'click .js-change-sync-option' 	: 'toggleSync',
+			'click .js-add-list'			: 'addList'
 
 		},
 
 		initialize: function(options, AppView, Storage){
-			this.options = options;
-			this.notesCollection = this.options.notesCollection;
-			this.settingsModel = this.options.settingsModel;
+			this.options 			= options;
+			this.notesCollection 	= this.options.notesCollection;
+			this.settingsModel 		= this.options.settingsModel;
+			this.AppView 			= AppView;
+			this.Storage 			= Storage;
+			
 			this.bindEvents();
-			this.AppView = AppView;
-			this.Storage = Storage;
-
 		},
 
 		initializeOptionsView: function(type){
@@ -90,6 +91,27 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 						];
 					break;
 
+				case 'size':
+					displayOptions = [
+							{
+								textToDisplay:"Small",
+								id: "small",
+								value: "180-300"
+							},
+							{
+								textToDisplay:"Normal",
+								id: "normal",
+								value: "250-450"
+							},
+							{
+								textToDisplay:"Large",
+								id: "large",
+								value: "320-580"
+							}
+						];
+
+
+
 			}
 
 			idName = type;
@@ -113,7 +135,12 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 			this.initializeOptionsView('fontFamily');
 		},
 
+		changeSize: function(e){
+			this.initializeOptionsView('size');
+		},
+
 		toggleSync: function(){
+			var self = this;
 			if (this.Storage.isSyncOn()){
 				this.Storage.syncOff();
 				this.settingsModel.set({'sync':0});
@@ -122,7 +149,7 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 				this.Storage.syncOn(function(val){
 					console.log(val);
 					if(val.saved == 'Ok'){
-						this.settingsModel.set({'sync':1});
+						self.settingsModel.set({'sync':1});
 					}
 				});
 			}

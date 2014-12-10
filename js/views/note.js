@@ -9,7 +9,10 @@ define(['backbone'],function( Backbone){
 			this.el = $(selector);
 			this.editor = new MediumEditor(selector, {
 	            disableToolbar: true,
-	            cleanPastedHTML: true
+	            cleanPastedHTML: false,
+	            checkLinkFormat: true,
+	            forcePlainText: false,
+	            anchorTarget: true,
 	        });
 		},
 		getNoteTemplate: function(model, number){
