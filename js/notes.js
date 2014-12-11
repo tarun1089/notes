@@ -1,4 +1,4 @@
-define(['views/app', 'collections/notes', 'models/settings','storage'],function(AppView, NotesCollection, SettingsModel, Storage){
+define(['views/app', 'collections/notes', 'collections/list', 'models/settings','storage'],function(AppView, NotesCollection, ListItemCollection, SettingsModel, Storage){
 
 
 	// var backgroundPage;
@@ -20,7 +20,8 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
                 var obj = self.getDataFromNotes();
                 var object = {
                     notesData : obj.dataArr,
-                    settings: obj.settings
+                    settings: obj.settings,
+                    list: obj.list
                 };
                 backgroundPage.Storage.setKeys(object, function(val){
                     console.log(val.status);
@@ -31,6 +32,7 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
         getDataFromNotes : function(){
             var dataArr = [];
             var settings = {};
+            var list = [];
             var obj = {};
             if (this.appView && this.appView.childViews){
                 _.each(this.appView.childViews, function(view_obj, index){
@@ -38,7 +40,7 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
                     var innerHTML = view.el.html();
                     var obj = {
                         text: innerHTML
-                    }
+                    };
                     dataArr.push(obj);
                 });
 
@@ -46,10 +48,15 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
 
             if (this.settingsModel){
                 settings = this.settingsModel.toJSON();
+            } 
+
+            if (this.listItemCollection){
+                list = this.listItemCollection.toJSON();
             }
 
-            obj["dataArr"] = dataArr;
-            obj["settings"] = settings;
+            obj.dataArr = dataArr;
+            obj.settings = settings;
+            obj.list = list;
             
             return obj;
         },
@@ -57,6 +64,7 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
         onGetDataFromStorage : function(data){
             var notesData;
             var settings = {};
+            var list = [];
             if (data && data.notesData && data.notesData.length > 0) {
                 notesData  = data.notesData;
             } else {
@@ -66,9 +74,34 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
             if (data && data.settings && Object.keys(data.settings).length > 0){
                 settings = data.settings;
             }
+
+            if (data && data.list && data.list.length > 0) {
+                // list = [
+                //     {text:'item 1', isChecked: false},
+                //     {text:'item 2', isChecked: false}
+                // ];
+                list = data.list;
+            }
+
+            // if (data) {
+            //     list = [
+            //         {text:'item 1', isChecked: false},
+            //         {text:'item 2', isChecked: false}
+            //     ];
+            // }
+
             this.notesCollection = new NotesCollection(notesData);
             this.settingsModel = new SettingsModel(settings);
-            this.appView = new AppView({notesCollection: this.notesCollection, settingsModel: this.settingsModel, Storage: Storage});
+            this.listItemCollection = new ListItemCollection(list);
+
+            this.appView = new AppView(
+                {
+                    notesCollection: this.notesCollection,
+                    settingsModel: this.settingsModel,
+                    Storage: Storage,
+                    listItemCollection: this.listItemCollection
+                }
+            );
             console.log(this.getDataFromNotes());
         }
     };
@@ -80,7 +113,7 @@ define(['views/app', 'collections/notes', 'models/settings','storage'],function(
     });
 
     
-    Storage.getValues(['notesData','settings'],Notes.onGetDataFromStorage.bind(Notes));
+    Storage.getValues(['notesData','settings','list'],Notes.onGetDataFromStorage.bind(Notes));
 
     return Notes;
 

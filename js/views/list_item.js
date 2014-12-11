@@ -1,14 +1,23 @@
 define(['backbone'],function( Backbone){
 
 	var ListItemView = Backbone.View.extend({
-		initialize: function(model, parentEl){
+		initialize: function(model){
 			var noteTemplate = this.getListItemTemplate(model);
-			parentEl.append(listItemTemplate);
+			this.$el = $(noteTemplate);
+			if (model.get('isChecked')){
+				this.$el.find('input').prop('checked', true);
+			} else {
+				this.$el.find('input').prop('checked', false);
+			}
 		},
 		getListItemTemplate: function(model, number){
 
 			var str = '';
-			str += '<li class="list-item" data-cid="'+ model.cid +'">';
+			var checkedClassName = "";
+			if (model.get('isChecked')) {
+				checkedClassName = "checked";
+			}
+			str += '<li class="list-item ' + checkedClassName+ '" data-cid="'+ model.cid +'">';
 
 				str += '<input id="list-' + model.cid+ '" type="checkbox"></input>';
 				var textToInsert = model.get('text');
