@@ -1,25 +1,40 @@
 @width: 200px;
 @height: 400px;
+
+
+:focus {
+	outline: none;
+}
+
+
 body {
 	margin: 0px;
 	padding: 0px;
 }
 
-.notes {
+.notes, .app {
 	display: flex;
+}
+
+.notes {
+	flex-direction: row-reverse;
 }
 
 .note-container {
 	position: relative;
+	display: flex;
 }
 
 .note {
-	width: @width;
+	/*width: @width;*/
 	height: @height;
 	padding: 12px;
 	font-size: 14px;
 	overflow-y: scroll; 
 	float: left;
+	width: @width;
+	-webkit-transition: width 3s ease 1s;
+	transition: width 2s cubic-bezier(0.625, 0.020, 0.930, 0.210);
 }
 
 .note a {
@@ -39,6 +54,13 @@ body {
 
 
 
+.list-container{
+	display: flex;
+	flex-direction: column-reverse
+}
+
+
+
 .hide-show {
 	width: 40px;
 	height: 40px;
@@ -54,8 +76,14 @@ body {
 .settings {
 	position: absolute;
 	right: 10px;
-	bottom: 10px;
-	display: none;
+	bottom: 50px;
+	display: flex;
+	flex-direction: column;
+	width: 0px;
+	background-color: wheat;
+	font-size: 0;
+	transition: all .2s cubic-bezier(.17,.67,.41,.99) ;
+
 }
 
 /*.setting {
@@ -63,10 +91,9 @@ body {
 }*/
 
 .settings.selected {
-	display: block;
+	font-size: 14px;
 	width: 200px;
-	height: auto;
-	background-color: wheat;
+	transition: all .2s cubic-bezier(.1,.8,.58,1.58);
 }
 
 .settings.selected .setting {
@@ -79,9 +106,20 @@ body {
 }
 
 
+.options {
+	display: flex;
+	font-size: 0;
+}
 
+.options.animate {
+	font-size: 14px;
+	transition: all .2s cubic-bezier(.1, .8, .58, 1.58);
+}
 
 .options li {
 	padding: 10px;
 	cursor: pointer;
 }
+
+
+

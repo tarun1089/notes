@@ -17,7 +17,7 @@ define(['backbone', 'views/note', 'views/list','views/settings'],function(Backbo
 			this.applySettings();
 			this.bindEvents();
 
-			this.initializeSettingsView(notesCollection, this.settingsModel, this.Storage);
+			this.initializeSettingsView(this.notesCollection, this.settingsModel, this.Storage);
 		},
 
 		initializeSettingsView: function(notesCollection, settingsModel, Storage){
@@ -78,7 +78,7 @@ define(['backbone', 'views/note', 'views/list','views/settings'],function(Backbo
 			var cid = targetNote.attr('data-cid');
 			var model = this.notesCollection.get(cid);
 			this.notesCollection.remove(model);
-			targetNote.remove();
+			// targetNote.remove();
 		},
 
 		onRemoveNoteFromCollection: function(model) {
@@ -90,7 +90,7 @@ define(['backbone', 'views/note', 'views/list','views/settings'],function(Backbo
 				}
 				return false;
 			});
-			viewObjToRemove.noteView.remove();
+			viewObjToRemove.noteView.$el.remove();
 			// this.render(this.notesCollection);
 			// this.applySettings();
 

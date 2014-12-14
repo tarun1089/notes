@@ -37,7 +37,7 @@ define(['views/app', 'collections/notes', 'collections/list', 'models/settings',
             if (this.appView && this.appView.childViews){
                 _.each(this.appView.childViews, function(view_obj, index){
                     var view = view_obj.noteView;
-                    var innerHTML = view.el.html();
+                    var innerHTML = view.$noteEl.html();
                     var obj = {
                         text: innerHTML
                     };

@@ -8,6 +8,8 @@ define(['backbone','views/settings','views/list_item'],function(Backbone,Setting
 		},
 		initialize: function(listItemCollection){
 			this.listItemCollection = listItemCollection;
+			this.$listContainerEl = this.$el.find('.list-container').eq(0);
+			
 			this.bindEvents();
 			this.render();
 		},
@@ -22,7 +24,7 @@ define(['backbone','views/settings','views/list_item'],function(Backbone,Setting
 
 		addItem: function(model){
 			var listItemView = new ListItemView(model)
-			this.$el.prepend(listItemView.$el);
+			this.$listContainerEl.append(listItemView.$el);
 		},
 
 		checkNote: function(e){

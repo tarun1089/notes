@@ -5,8 +5,10 @@ define(['backbone'],function( Backbone){
 		initialize: function(model, number, parentEl){
 			var noteTemplate = this.getNoteTemplate(model, number);
 			parentEl.append(noteTemplate);
+
 			var selector = '.' + this.NOTE_CLASS_NAME + '-' + model.cid;
-			this.el = $(selector);
+			this.$noteEl = $(selector);
+			this.$el = this.$noteEl.parent();
 			this.editor = new MediumEditor(selector, {
 	            disableToolbar: true,
 	            cleanPastedHTML: false,

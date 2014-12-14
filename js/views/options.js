@@ -15,6 +15,8 @@ define(['backbone'],function( Backbone){
 
 			var template = this.getOptionsTemplate(displayOptions,idName,className);
 			this.$el.html(template);
+			this.applyCSSRelatedStuff(this.$el);
+
 		},
 		getOptionsTemplate: function(displayOptions, idName, className){
 			var str = '';
@@ -62,6 +64,15 @@ define(['backbone'],function( Backbone){
 					break;
 			}
 		},
+		applyCSSRelatedStuff: function(el){
+			setTimeout(function(){
+				el.addClass('animate');
+			}, 0);
+		},
+
+		removeCSSRelatedStuff: function(el){
+			el.removeClass('animate');
+		},
 
 		supressEvent: function(e){
 			e.preventDefault();
@@ -70,7 +81,8 @@ define(['backbone'],function( Backbone){
 
 		destroy: function(){
 			this.$el.unbind();
-			this.$el.html();
+			this.$el.html('');
+			this.removeCSSRelatedStuff(this.$el);
 		}
 	});
 	return OptionsView;

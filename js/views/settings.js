@@ -31,7 +31,7 @@ define(['backbone','views/options'],function(Backbone, OptionsView){
 		},
 
 		bindEvents: function(){
-			$('.hide-show').on('click', this.toggleMenu.bind(this));
+			$('.js-hide-show').on('click', this.toggleMenu.bind(this));
 		},
 
 		addNote: function(e){
