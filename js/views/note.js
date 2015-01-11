@@ -11,9 +11,9 @@ define(['backbone'],function( Backbone){
 			this.$el = this.$noteEl.parent();
 			this.editor = new MediumEditor(selector, {
 	            disableToolbar: true,
-	            cleanPastedHTML: false,
+	            cleanPastedHTML: true,
 	            checkLinkFormat: true,
-	            forcePlainText: false,
+	            forcePlainText: true,
 	            anchorTarget: true,
 	        });
 		},

@@ -1,17 +1,16 @@
-define(['views/app', 'collections/notes', 'collections/list', 'models/settings','storage'],function(AppView, NotesCollection, ListItemCollection, SettingsModel, Storage){
+define(['views/app',
+        'collections/notes',
+        'collections/list',
+        'models/settings',
+        'storage'],
+
+        function(AppView,
+                NotesCollection,
+                ListItemCollection,
+                SettingsModel,
+                Storage){
 
 
-	// var backgroundPage;
-
-	// chrome.runtime.sendMessage({
- //      getData: "all"
- //    },function(val){
- //    	console.log(val);
- //    });
-
-    // function bindEvents(backgroundPage){
-        
-    // }
 
     var Notes = {
         bindEventsOnBackgroundPage : function(backgroundPage){

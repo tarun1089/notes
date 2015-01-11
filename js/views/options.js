@@ -67,7 +67,7 @@ define(['backbone'],function( Backbone){
 		applyCSSRelatedStuff: function(el){
 			setTimeout(function(){
 				el.addClass('animate');
-			}, 0);
+			}, 10);
 		},
 
 		removeCSSRelatedStuff: function(el){

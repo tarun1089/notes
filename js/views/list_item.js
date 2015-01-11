@@ -17,9 +17,9 @@ define(['backbone'],function( Backbone){
 			if (model.get('isChecked')) {
 				checkedClassName = "checked";
 			}
-			str += '<li class="list-item ' + checkedClassName+ '" data-cid="'+ model.cid +'">';
+			str += '<li class="list-item ripplelink' + checkedClassName+ '" data-cid="'+ model.cid +'">';
 
-				str += '<input id="list-' + model.cid+ '" type="checkbox"></input>';
+				str += '<input class="checkbox" id="list-' + model.cid+ '" type="checkbox"></input>';
 				var textToInsert = model.get('text');
 				str += '<label for="list-' + model.cid+ '">'+ textToInsert +'</label>';
 				
